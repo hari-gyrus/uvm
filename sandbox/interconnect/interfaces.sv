@@ -91,7 +91,7 @@ interface axi_rdata_if #(AW = 32, DW = 32);
 endinterface // axi_rdata_if
 
 //
-// write address interface
+// axi write address interface
 //
 
 interface axi_waddr_if #(AW = 32, DW = 32);
@@ -137,17 +137,17 @@ interface axi_wdata_if #(AW = 32, DW = 32);
    logic 		   WVALID;   
    logic 		   WREADY;  
 				
-   modport master ( input  WID,
+   modport master ( output  WID,
+		            WDATA,
+		            WLAST, 
+			    WVALID,
+		     input  WREADY);
+   
+   modport slave  ( input  WID,
 		           WDATA,
 			   WLAST,
 			   WVALID,
 		    output WREADY);
-   
-   modport slave  ( output WID,
-		           WDATA,
-			   WLAST,
-			   WVALID,
-		    input  WREADY);
 
 endinterface // axi_wdata_if
 

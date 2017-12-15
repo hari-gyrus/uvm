@@ -8,6 +8,7 @@
 
 `include "uvm_macros.svh"
 `include "interfaces.sv"
+`include "defines.sv"
 
 module testbench;
 
@@ -29,17 +30,17 @@ module testbench;
 
    // dut
 
-   interconnect dut (.clk_rst_if	(clk_rst_if),   
-		     .ocp_if	        (ocp_if),     
-		     .axi_raddr_if1	(axi_raddr_if1),
-		     .axi_rdata_if1	(axi_rdata_if1),
-		     .axi_waddr_if1	(axi_waddr_if1),
-		     .axi_wdata_if1	(axi_wdata_if1),
-		     .axi_wresp_if1     (axi_wresp_if1),
-		     .axi_raddr_if2	(axi_raddr_if2),
-		     .axi_rdata_if2	(axi_rdata_if2),
-		     .axi_waddr_if2	(axi_waddr_if2),
-		     .axi_wdata_if2	(axi_wdata_if2),
-		     .axi_wresp_if2     (axi_wresp_if2));
+   interconnect dut (.clk_rst_if    (clk_rst_if),   
+		     .ocp_if	    (ocp_if),     
+		     .axi_raddr_s1  (axi_raddr_if1),
+		     .axi_rdata_s1  (axi_rdata_if1),
+		     .axi_waddr_s1  (axi_waddr_if1),
+		     .axi_wdata_s1  (axi_wdata_if1),
+		     .axi_wresp_s1  (axi_wresp_if1),
+		     .axi_raddr_s2  (axi_raddr_if2),
+		     .axi_rdata_s2  (axi_rdata_if2),
+		     .axi_waddr_s2  (axi_waddr_if2),
+		     .axi_wdata_s2  (axi_wdata_if2),
+		     .axi_wresp_s2  (axi_wresp_if2));
       
 endmodule // testbench
