@@ -9,9 +9,12 @@
 `include "uvm_macros.svh"
 `include "interfaces.sv"
 `include "defines.sv"
+`include "alive_test.sv"
 
 module testbench;
 
+   import uvm_pkg::*;
+   
    // interfaces
    
    ocp_if       ocp_if();   
@@ -29,7 +32,7 @@ module testbench;
    axi_wresp_if axi_wresp_if2();
 
    // dut
-
+   
    interconnect dut (.clk_rst_if    (clk_rst_if),   
 		     .ocp_if	    (ocp_if),     
 		     .axi_raddr_s1  (axi_raddr_if1),
@@ -43,4 +46,23 @@ module testbench;
 		     .axi_wdata_s2  (axi_wdata_if2),
 		     .axi_wresp_s2  (axi_wresp_if2));
       
+   // clk and reset
+
+   initial 
+     begin
+      clk_rst_if.clk = 0; 
+      clk_rst_if.rstn = 1'b0;
+      #100 clk_rst_if.rstn = 1'b1;                  
+      #10000 $finish;      
+     end
+
+   always #5 clk_rst_if.clk = ~clk_rst_if.clk;   
+
+   // run test
+
+   initial
+     begin
+	uvm_pkg::run_test("alive_test");	
+     end	  
+   
 endmodule // testbench

@@ -13,12 +13,12 @@
 interface clk_rst_if;
 
    logic clk;
-   logic rst;
+   logic rstn;
 
-   modport src  ( output clk, rst);   
-   modport sink ( input  clk, rst);   
+   modport src  ( output clk, rstn);   
+   modport sink ( input  clk, rstn);   
 		        
-endinterface // clk_rst_if
+endinterface // clk_rstn_if
 
 //
 // axi read addr interface
