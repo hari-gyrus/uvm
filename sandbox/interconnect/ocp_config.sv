@@ -6,11 +6,11 @@
 // comes with this distribution for more information.
 // ********************************************************************************
 
-package tb_pkg;
+class ocp_config;
 
-  `include "ocp_config.sv"
-  `include "axi_config.sv"
+   // virtual interfaces
+   virtual clk_rst_if clk_rst_vif;
+   virtual ocp_if     ocp_vif;
 
-endpackage // pkg
-   
-   
+endclass // ocp_config
+

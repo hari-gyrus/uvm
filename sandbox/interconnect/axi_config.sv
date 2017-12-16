@@ -6,11 +6,15 @@
 // comes with this distribution for more information.
 // ********************************************************************************
 
-package tb_pkg;
+class axi_config;
 
-  `include "ocp_config.sv"
-  `include "axi_config.sv"
+   // virtual interfaces
+   virtual clk_rst_if   clk_rst_vif;
+   virtual axi_raddr_if axi_raddr_vif;
+   virtual axi_rdata_if axi_rdata_vif;
+   virtual axi_waddr_if axi_waddr_vif;
+   virtual axi_wdata_if axi_wdata_vif;
+   virtual axi_wresp_if axi_wresp_vif;   
 
-endpackage // pkg
-   
-   
+endclass // axi_config
+
