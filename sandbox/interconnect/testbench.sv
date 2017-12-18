@@ -65,32 +65,32 @@ module testbench;
    // uvm config db
    initial
      begin	
-	ocp_config ocp_cfg;
-	axi_config axi_cfg1, axi_cfg2;   
+	ocp_config ocp_s1_cfg;
+	axi_config axi_m1_cfg, axi_m2_cfg;   
 	
-	ocp_cfg             = new();   
-	ocp_cfg.ocp_vif     = ocp_if;
-	ocp_cfg.clk_rst_vif = clk_rst_if;
+	ocp_s1_cfg             = new();   
+	ocp_s1_cfg.ocp_vif     = ocp_if;
+	ocp_s1_cfg.clk_rst_vif = clk_rst_if;
 	
-	axi_cfg1               = new();
-	axi_cfg1.clk_rst_vif   = clk_rst_if;
-	axi_cfg1.axi_raddr_vif = axi_raddr_if1;
-	axi_cfg1.axi_rdata_vif = axi_rdata_if1;
-	axi_cfg1.axi_waddr_vif = axi_waddr_if1;
-	axi_cfg1.axi_wdata_vif = axi_wdata_if1;
-	axi_cfg1.axi_wresp_vif = axi_wresp_if1;
+	axi_m1_cfg               = new();
+	axi_m1_cfg.clk_rst_vif   = clk_rst_if;
+	axi_m1_cfg.axi_raddr_vif = axi_raddr_if1;
+	axi_m1_cfg.axi_rdata_vif = axi_rdata_if1;
+	axi_m1_cfg.axi_waddr_vif = axi_waddr_if1;
+	axi_m1_cfg.axi_wdata_vif = axi_wdata_if1;
+	axi_m1_cfg.axi_wresp_vif = axi_wresp_if1;
 	
-	axi_cfg2               = new();
-	axi_cfg2.clk_rst_vif   = clk_rst_if;
-	axi_cfg2.axi_raddr_vif = axi_raddr_if2;
-	axi_cfg2.axi_rdata_vif = axi_rdata_if2;
-	axi_cfg2.axi_waddr_vif = axi_waddr_if2;
-	axi_cfg2.axi_wdata_vif = axi_wdata_if2;
-	axi_cfg2.axi_wresp_vif = axi_wresp_if2;
+	axi_m2_cfg               = new();
+	axi_m2_cfg.clk_rst_vif   = clk_rst_if;
+	axi_m2_cfg.axi_raddr_vif = axi_raddr_if2;
+	axi_m2_cfg.axi_rdata_vif = axi_rdata_if2;
+	axi_m2_cfg.axi_waddr_vif = axi_waddr_if2;
+	axi_m2_cfg.axi_wdata_vif = axi_wdata_if2;
+	axi_m2_cfg.axi_wresp_vif = axi_wresp_if2;
 	
-	uvm_config_db #(ocp_config)::set(null, "", "ocp_cfg", ocp_cfg);
-	uvm_config_db #(axi_config)::set(null, "", "axi_cfg1", axi_cfg1);
-	uvm_config_db #(axi_config)::set(null, "", "axi_cfg2", axi_cfg2);      
+	uvm_config_db #(ocp_config)::set(null, "", "ocp_s1_cfg", ocp_s1_cfg);
+	uvm_config_db #(axi_config)::set(null, "", "axi_m1_cfg", axi_m1_cfg);
+	uvm_config_db #(axi_config)::set(null, "", "axi_m2_cfg", axi_m2_cfg);      
      end // initial begin
    
 endmodule // testbench

@@ -13,6 +13,9 @@
 parameter AW = 32;
 parameter DW = 32;
 
+typedef enum bit { AXI_READ  = 0; 
+		   AXI_WRITE = 1; } rw_T;
+
 typedef enum bit [1:0] { RRESP_OKAY   = 2'b00,
 			 RRESP_EXOKAY = 2'b01,
 			 RRESP_SLVERR = 2'b10,
@@ -25,20 +28,20 @@ typedef enum bit [1:0] { BRESP_OKAY   = 2'b00,
 			 BRESP_DECERR = 2'b11 
 			 } BRESP_T;
 
-typedef enum bit [2:0] { IDLE    = 3'b000,  // IDLE
-			 WRITE   = 3'b001,  // WRITE
-			 READ    = 3'b010,  // READ
-			 READEX  = 3'b011,  // READ EXCLUSIVE
-			 RDL     = 3'b100,  // READ LINKED
-			 WRNP    = 3'b101,  // WRITE NON POSTED
-			 WRC     = 3'b110,  // WRITE CONDITIONAL
-			 BCAST   = 3'b111   // BROADCAST
+typedef enum bit [2:0] { OCP_IDLE     = 3'b000,  // IDLE
+			 OCP_WRITE    = 3'b001,  // WRITE
+			 OCP_READ     = 3'b010,  // READ
+			 OCP_READEX   = 3'b011,  // READ EXCLUSIVE
+			 OCP_RDL      = 3'b100,  // READ LINKED
+			 OCP_WRNP     = 3'b101,  // WRITE NON POSTED
+			 OCP_WRC      = 3'b110,  // WRITE CONDITIONAL
+			 OCP_BCAST    = 3'b111   // BROADCAST
 			 } MCmd_T;
 
-typedef enum bit [1:0] { NULL = 2'b00, // NO RESPONSE
-			 DVA  = 2'b01, // DATA VALID / ACCEPT
-			 FAIL = 2'b10, // REQUEST FAILED
-			 ERR  = 2'b11  // RESPONSE ERROR
+typedef enum bit [1:0] { OCP_NULL  = 2'b00, // NO RESPONSE
+			 OCP_DVA   = 2'b01, // DATA VALID / ACCEPT
+			 OCP_FAIL  = 2'b10, // REQUEST FAILED
+			 OCP_ERR   = 2'b11  // RESPONSE ERROR
 			 } SResp_T;
 
 

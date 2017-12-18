@@ -9,12 +9,10 @@
 class alive_test extends uvm_test;
    `uvm_component_utils(alive_test)
 
-   // sub components - env, sequence
-/* -----\/----- EXCLUDED -----\/-----
-   test_env env;   
-   ocp_sequence ocp_seq;   
-   axi_sequence axi_seq1, axi_seq2;   
- -----/\----- EXCLUDED -----/\----- */
+   // sub components - config, env, sequence
+   test_env env;
+   ocp_sequence ocp_s1_sequence;
+   axi_sequence axi_m1_sequence, axi_m2_sequence;
    
    function new (string name, uvm_component parent);
       super.new(name, parent);      
@@ -23,16 +21,33 @@ class alive_test extends uvm_test;
    virtual function void build_phase (uvm_phase phase);
       super.build_phase(phase);
 
-      // factory create
-/* -----\/----- EXCLUDED -----\/-----
-      env      = test_env::typeid::create("env", this);
-      ocp_seq  = ocp_sequence::typeid::create("ocp_seq", this);
-      axi_seq1 = ocp_sequence::typeid::create("ocp_seq1", this);
-      axi_seq2 = ocp_sequence::typeid::create("ocp_seq2", this);      
- -----/\----- EXCLUDED -----/\----- */
-
-      // 
+      // factory create 
+      env = test_env::typeid::create("env", this);
    endfunction // build_phase
-   
+
+   virtual function void end_of_elaboration(uvm_phase phase);
+      super.end_of_elaboration(phase);
+      this.print();      
+   endfunction // end_of_elaboration   
+     
+   task run_phase(uvm_phase phase);
+      ocp_s1_sequence = ocp_sequence::typeid::create("ocp_s1_sequence",  this);
+      axi_m1_sequence = axi_sequence::typeid::create("axi_m1_sequence", this);
+      axi_m2_sequence = axi_sequence::typeid::create("axi_m2_sequence", this);
+
+      axi_m1_sequence.master_id = 1;
+      axi_m1_sequence.num_transactions = 10;      
+      
+      axi_m2_sequence.master_id = 2;
+      axi_m2_sequence.num_transactions = 10;     
+      
+      phase.raise_objection(this, "Starting test");
+      fork
+	 ocp_s1_sequence.start(env.ocp_agent.ocp_s1_sequencer);
+	 axi_m1_sequence.start(env.axi_agent1.axi_sequencer);
+	 axi_m2_sequence.start(env.axi_agent2.axi_sequencer);	 
+      join_none     
+      phase.drop_objection(this, "Ending test");      
+   endtask // run_phase
    
 endclass // alive_test
