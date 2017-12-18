@@ -6,12 +6,4 @@
 // comes with this distribution for more information.
 // ********************************************************************************
 
-package tb_pkg;
-
-  `include "defines.sv"
-  `include "ocp_config.sv"
-  `include "axi_config.sv"
-
-endpackage // pkg
-   
-   
+  
