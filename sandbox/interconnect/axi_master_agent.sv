@@ -10,9 +10,9 @@ class axi_master_agent extends uvm_agent;
    `uvm_component_utils(axi_master_agent)
 
    axi_config axi_cfg;
-   axi_driver axi_drv;
-   axi_sequencer axi_seq;
-   axi_monitor axi_mon;
+   axi_master_driver axi_drv;
+   axi_master_sequencer axi_seq;
+   axi_master_monitor axi_mon;
 
    uvm_analysis_port rd_ana_port;
    uvm_analysis_port wr_ana_port;   
@@ -27,9 +27,9 @@ class axi_master_agent extends uvm_agent;
       axi_cfg = new();
       rd_ana_port = new("rd_ana_port", this);
       wr_ana_port = new("wr_ana_port", this);      
-      axi_drv = axi_driver::typeid::create(axi_drv, this);
-      axi_seq = axi_sequencer::typeid::create(axi_seq, this);
-      axi_mon = axi_monitor::typeid::create(axi_mon,this);
+      axi_drv = axi_master_driver::typeid::create(axi_drv, this);
+      axi_seq = axi_master_sequencer::typeid::create(axi_seq, this);
+      axi_mon = axi_master_monitor::typeid::create(axi_mon,this);
 
       axi_drv.axi_cfg = axi_cfg;
       axi_mon.axi_cfg = axi_cfg;      
