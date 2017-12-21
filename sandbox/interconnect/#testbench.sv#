@@ -48,6 +48,7 @@ module testbench;
 	$dumpvars(0, testbench);
      end
 
+   
    initial begin
       clk_rst_if.clk = 0; 
       clk_rst_if.rstn = 1'b0;

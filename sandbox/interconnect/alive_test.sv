@@ -33,16 +33,18 @@ class alive_test extends uvm_test;
       axi_m2_sequence = axi_sequence::type_id::create("axi_m2_sequence", this);
 
       axi_m1_sequence.master_id = 1;
-      axi_m1_sequence.num_transactions = 10;
       axi_m2_sequence.master_id = 2;
+
+      ocp_s1_sequence.num_transactions = 10;
+      axi_m1_sequence.num_transactions = 10;
       axi_m2_sequence.num_transactions = 10;
       
       phase.raise_objection(this, "Starting test");
       fork
-	 ocp_s1_sequence.start(env.ocp_s1_agent.ocp_seq);
 	 axi_m1_sequence.start(env.axi_m1_agent.axi_seq);
 	 axi_m2_sequence.start(env.axi_m2_agent.axi_seq);	 
-      join_none     
+	 ocp_s1_sequence.start(env.ocp_s1_agent.ocp_seq);
+      join
       phase.drop_objection(this, "Ending test");
    endtask // run_phase
    
