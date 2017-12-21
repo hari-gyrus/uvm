@@ -7,28 +7,28 @@
 // ********************************************************************************
 
 class inorder_scoreboard #(type REQ_T=axi_transaction, type RESP_T=ocp_transaction) extends uvm_scoreboard;
-   `uvm_component_utils(inorder_scoreboard)
+   `uvm_component_param_utils(inorder_scoreboard #(REQ_T, RESP_T))
 
    int master_id;   
 
-   uvm_analysis_export req_ana_export;
-   uvm_analysis_export resp_ana_export;
+   uvm_analysis_export #(REQ_T)  req_ana_export;
+   uvm_analysis_export #(RESP_T) resp_ana_export;
 
-   uvm_analysis_tlm_fifo #(REQ_T) REQ_FIFO;
-   uvm_analysis_tlm_fifo #(RESP_T) RESP_FIFO;
+   uvm_tlm_analysis_fifo #(REQ_T)  REQ_FIFO;
+   uvm_tlm_analysis_fifo #(RESP_T) RESP_FIFO;
 
-   function void new(string name, uvm_component parent);
+   function new(string name, uvm_component parent);
       super.new(name, parent);      
    endfunction // new
 
    virtual function void build_phase(uvm_phase phase);
       super.build_phase(phase);
 
+      REQ_FIFO  = new("REQ_FIFO", this);
+      RESP_FIFO = new("RESP_FIFO", this);            
+
       req_ana_export = new("req_ana_export", this);
       resp_ana_export = new("resp_ana_export", this);
-
-      REQ_FIFO = new();
-      RESP_FIFO = new();            
    endfunction // build_phase
 
    virtual function void connect_phase(uvm_phase phase);
@@ -38,7 +38,7 @@ class inorder_scoreboard #(type REQ_T=axi_transaction, type RESP_T=ocp_transacti
       resp_ana_export.connect(RESP_FIFO.analysis_export);      
    endfunction // connect_phase
 
-   virtual task run_phase;
+   virtual task run_phase(uvm_phase phase);
       REQ_T req_txn;
       RESP_T resp_txn;
 
@@ -79,104 +79,13 @@ class inorder_scoreboard #(type REQ_T=axi_transaction, type RESP_T=ocp_transacti
       end
 
       if (status == "eq") 
-	`uvm_info(msg, "SUCCESS", UVM_MEDIUM)
+	`uvm_info("msg", "SUCCESS", UVM_MEDIUM)
       else 
-	`uvm_info(msg, "FAILURE", UVM_MEDIUM)
+	`uvm_info("msg", "FAILURE", UVM_MEDIUM)
 
-   endtask // compare_txn
-   
-   
-endclass // inorder_scoreboard
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// ********************************************************************************
-
-class inorder_scoreboard #(type REQ_T=axi_transaction, type RESP_T=ocp_transaction) extends uvm_scoreboard;
-   `uvm_component_utils(inorder_scoreboard)
-
-   uvm_analysis_export req_ana_export;
-   uvm_analysis_export resp_ana_export;
-
-   uvm_tlm_analysis_fifo #(REQ_T) REQ_FIFO;
-   uvm_tlm_analysis_fifo #(RESP_T) RESP_FIFO;      
-     
-   function void new(string name, uvm_component parent);
-      super.new(name, parent);      
-   endfunction // new
-
-   virtual function void build_phase(uvm_phase phase);
-      super.build_phase(phase);
-
-      req_ana_export  = new("req_ana_export", this);
-      resp_ana_export = new("resp_ana_export", this);      
-
-      REQ_FIFO = new("REQ_FIFO", this);
-      RESP_FIFO = new("RESP_FIFO", this);      
-   endfunction // build_phase
-
-   virtual function void connect_phase(uvm_phase phase);
-      super.connect_phase(phase);
-
-      req_ana_export.connect(REQ_FIFO.analysis_export);
-      resp_ana_export.connect(RESP_FIFO.analysis_export);      
-   endfunction // connect_phase
-
-   virtual task run_phase;
-      REQ_T req_txn;
-      RESP_T resp_txn;
-
-      req_txn = new();
-      resp_txn = new();
-      
-      forever begin
-	 REQ_FIFO.get(req_txn);
-	 RESP_FIFO.get(resp_txn);	 
-	 compare_axi_ocp(req_txn, resp_txn);
-      end
-   endtask // run_phase
-
-   task compare_axi_ocp (REQ_T req_txn, RESP_T resp_txn);
-      
-   endtask // compare_axi_ocp   
+   endtask // compare_txn   
    
 endclass // inorder_scoreboard
+
+
+

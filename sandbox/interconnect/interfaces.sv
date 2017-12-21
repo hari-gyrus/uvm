@@ -20,10 +20,7 @@ interface clk_rst_if;
 		        
 endinterface // clk_rstn_if
 
-//
 // axi read addr interface
-//
-
 interface axi_raddr_if #(AW = 32, DW = 32);
 
    logic [3:0]          ARID; 
@@ -61,10 +58,7 @@ interface axi_raddr_if #(AW = 32, DW = 32);
    
 endinterface // axi_raddr_if
 
-//
 // axi read data interface
-//
-
 interface axi_rdata_if #(AW = 32, DW = 32);
 
    logic [3:0]		   RID;   
@@ -90,10 +84,7 @@ interface axi_rdata_if #(AW = 32, DW = 32);
 
 endinterface // axi_rdata_if
 
-//
 // axi write address interface
-//
-
 interface axi_waddr_if #(AW = 32, DW = 32);
 
    logic [3:0] 		   AWID;
@@ -125,10 +116,7 @@ interface axi_waddr_if #(AW = 32, DW = 32);
 		    
 endinterface // axi_waddr_if
 
-//
 // axi write data interface
-//
-
 interface axi_wdata_if #(AW = 32, DW = 32);
 
    logic [3:0]		   WID;   
@@ -151,10 +139,7 @@ interface axi_wdata_if #(AW = 32, DW = 32);
 
 endinterface // axi_wdata_if
 
-//
 // axi write resp interface
-//
-
 interface axi_wresp_if;
 
    logic [3:0]		   BID;   
@@ -174,13 +159,10 @@ interface axi_wresp_if;
 
 endinterface // axi_wresp_if
 
-//
 // ocp interface
-//
-
 interface ocp_if #(AW = 32, DW = 32);
 
-   logic [2:0] 		MTagID;     
+   logic [3:0] 		MTagID;     
    logic [AW-1:0]       MAddr;
    logic [2:0]          MCmd; 
    logic [DW-1:0] 	Mdata;   

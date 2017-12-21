@@ -9,31 +9,29 @@
 class axi_transaction extends uvm_sequence_item;
    `uvm_object_utils(axi_transaction)
 
-   import tb_pkg::*;
-   
    rand rw_T rw;   
    rand bit [3:0] id;
    rand bit [3:0] length;
    rand bit [AW-1:0] addr;
    rand bit [DW-1:0] data;   
    
-   function new (string name);
-      super.ner(name);      
+   function new (string name = "axi_transaction");
+      super.new(name);      
    endfunction // new
    
-   function string do_copy(uvm_object rhs);
+   function void do_copy(uvm_object rhs);
       int i;
       axi_transaction rhs_t;
-      rhs_t = new();
 
+      $cast(rhs_t, rhs);
       super.do_copy(rhs_t);
+      
+      id     = rhs_t.id;
+      length = rhs_t.length;
+      addr   = rhs_t.addr;
 
-      this.id = rhs.id;
-      this.length = rhs.length;
-      this.addr = rhs.addr;
-
-      for (i=0; i<this.length; ++i)
-	this.data[i] = rhs.data[i];            
+      for (i=0; i<length; ++i)
+	data[i] = rhs_t.data[i];            
    endfunction // do_copy
 
    function string convert2string();
@@ -41,9 +39,9 @@ class axi_transaction extends uvm_sequence_item;
       string rpt;
       rpt = super.convert2string();
 
-      $sformat(rpt, "id=%d rw=%s addr=%h", this.id, this.rw, this.addr);
-      for (i=0; i<this.length; ++i)
-	$sformat(rpt, "data[%d]=%h", this.i, this.data[i]);      
+      $sformat(rpt, "id=%d rw=%s addr=%h", id, rw, addr);
+      for (i=0; i<length; ++i)
+	$sformat(rpt, "data[%d]=%h", i, data[i]);      
 
       return rpt;      
    endfunction // convert2string

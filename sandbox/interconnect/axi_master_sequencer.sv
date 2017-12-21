@@ -6,4 +6,4 @@
 // comes with this distribution for more information.
 // ********************************************************************************
 
-typedef uvm_sequencer #(axi_transaction) axi_slave_sequencer;
+typedef uvm_sequencer #(axi_transaction) axi_master_sequencer;

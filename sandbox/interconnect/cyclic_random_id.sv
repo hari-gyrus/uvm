@@ -9,15 +9,15 @@
 class cyclic_random_id extends uvm_sequence_item;
    `uvm_object_utils(cyclic_random_id)
    
-   rand bit [3:0] val_7_0;
+   rand bit [3:0] val_0_7;
    rand bit [3:0] val_8_F;
 
    constraint master_id {
-      val_7_0 inside { [0:7] };
-      val_F_8 inside { [8:15] };   
+      val_0_7 inside { [0:7] };
+      val_8_F inside { [8:15] };   
    }     
        
-   function new (string name);
+   function new (string name = "cyclic_random_id");
       super.new(name);      
    endfunction // new
    

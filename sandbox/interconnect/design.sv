@@ -64,17 +64,13 @@ module interconnect ( clk_rst_if.sink    clk_rst_if,
    // misc
    logic                SEND_BRESP_s1;
    logic                SEND_BRESP_s2;		
-   logic [31:0] 	mem [(16*1024)-1:0];
  	   
-   //
    // axi read slave 1, 2
-   //
-   
    always @(posedge clk_rst_if.clk) begin
       if (!clk_rst_if.rstn) begin
 	 // slave 1
 	 ARID_S1     = 4'b0; 
-	 ARADDR_S1   = 'd0;
+	 ARADDR_S1   = 32'b0;
 	 ARLEN_S1    = 4'b0;
 	 ARSIZE_S1   = 3'b0;
 	 ARBURST_S1  = 2'b0;
@@ -84,7 +80,7 @@ module interconnect ( clk_rst_if.sink    clk_rst_if,
 	 ARVALID_S1  = 1'b0;	 
 	 // slave 2
 	 ARID_S2     = 4'b0; 
-	 ARADDR_S2   = 'd0;
+	 ARADDR_S2   = 32'b0;
 	 ARLEN_S2    = 4'b0;
 	 ARSIZE_S2   = 3'b0;
 	 ARBURST_S2  = 2'b0;
@@ -95,6 +91,8 @@ module interconnect ( clk_rst_if.sink    clk_rst_if,
       end // if (!clk_rst_if.rstn)   
       else begin	 
 	 // slave 1
+	 ARVALID_S1 = axi_raddr_s1.ARVALID;	    
+
 	 if (axi_raddr_s1.ARVALID) begin
 	    ARID_S1     = axi_raddr_s1.ARID; 
 	    ARADDR_S1   = axi_raddr_s1.ARADDR;
@@ -104,9 +102,10 @@ module interconnect ( clk_rst_if.sink    clk_rst_if,
 	    ARLOCK_S1   = axi_raddr_s1.ARLOCK; 
 	    ARCACHE_S1  = axi_raddr_s1.ARCACHE;
 	    ARPROT_S1   = axi_raddr_s1.ARPROT;
-	    ARVALID_S1  = axi_raddr_s1.ARVALID;	    
 	 end	 
          // slave 2
+	 ARVALID_S2 = axi_raddr_s1.ARVALID;	    
+
 	 if (axi_raddr_s2.ARVALID) begin
 	    ARID_S2     = axi_raddr_s2.ARID; 
 	    ARADDR_S2   = axi_raddr_s2.ARADDR;
@@ -116,7 +115,6 @@ module interconnect ( clk_rst_if.sink    clk_rst_if,
 	    ARLOCK_S2   = axi_raddr_s2.ARLOCK; 
 	    ARCACHE_S2  = axi_raddr_s2.ARCACHE;
 	    ARPROT_S2   = axi_raddr_s2.ARPROT;
-	    ARVALID_S2  = axi_raddr_s1.ARVALID;	    
 	 end 	 
       end // else: !if(!clk_rst_if.rstn)      
    end // always @ (posedge clk_rst_if.clk)   
@@ -132,52 +130,50 @@ module interconnect ( clk_rst_if.sink    clk_rst_if,
       end      
    end   
 
-   //
    // axi read data slave 1, 2
-   // 
-
    always @(posedge clk_rst_if.clk) begin
       if (!clk_rst_if.rstn) begin
 	 // slave 1
 	 axi_rdata_s1.RID    = 4'b0;
-	 axi_rdata_s1.RDATA  = 'd0;
+	 axi_rdata_s1.RDATA  = 32'b0;
 	 axi_rdata_s1.RRESP  = 2'b0;
 	 axi_rdata_s1.RLAST  = 4'b0;
 	 axi_rdata_s1.RVALID = 4'b0;	 
 	 // slave 2
 	 axi_rdata_s2.RID    = 4'b0;
-	 axi_rdata_s2.RDATA  = 'd0;
+	 axi_rdata_s2.RDATA  = 32'b0;
 	 axi_rdata_s2.RRESP  = 2'b0;
 	 axi_rdata_s2.RLAST  = 4'b0;
 	 axi_rdata_s2.RVALID = 4'b0;	 
       end // if (!clk_rst_if.rstn)      
       else begin
 	 // slave 1
-	 if (axi_rdata_s1.RREADY) begin
-	    axi_rdata_s1.RID    = ARID_S1;
-	    axi_rdata_s1.RDATA  = mem[{ARID_S1,ARADDR_S1[9:0]}];	 
+	 if (axi_rdata_s1.RREADY && ocp_if.SResp == OCP_DVA && ocp_if.MTagID < 8) begin
 	    axi_rdata_s1.RRESP  = 2'b0;
 	    axi_rdata_s1.RLAST  = 1'b1;
 	    axi_rdata_s1.RVALID = 1'b1;
+	    axi_rdata_s1.RID    = ocp_if.MTagID;
+	    axi_rdata_s1.RDATA  = ocp_if.Sdata;	 
 	 end	 
 	 else begin
 	    axi_rdata_s1.RID    = 4'b0;
-	    axi_rdata_s1.RDATA  = 'd0;
+	    axi_rdata_s1.RDATA  = 32'b0;
 	    axi_rdata_s1.RRESP  = 2'b0;
 	    axi_rdata_s1.RLAST  = 4'b0;
 	    axi_rdata_s1.RVALID = 4'b0;	 
 	 end // else: !if(axi_rdata_s1.RREADY)	 
+
 	 // slave 2
-	 if (axi_rdata_s2.RREADY) begin
-	    axi_rdata_s2.RID    = ARID_S2;
-	    axi_rdata_s2.RDATA  = mem[{ARID_S2,ARADDR_S2[9:0]}];	 
+	 if (axi_rdata_s2.RREADY && ocp_if.SResp == OCP_DVA && ocp_if.MTagID >= 8) begin
 	    axi_rdata_s2.RRESP  = 2'b0;
 	    axi_rdata_s2.RLAST  = 1'b1;
 	    axi_rdata_s2.RVALID = 1'b1;
+	    axi_rdata_s2.RID    = ocp_if.MTagID;
+	    axi_rdata_s2.RDATA  = ocp_if.Sdata;	 
 	 end	 
 	 else begin
 	    axi_rdata_s2.RID    = 4'b0;
-	    axi_rdata_s2.RDATA  = 'd0;
+	    axi_rdata_s2.RDATA  = 32'b0;
 	    axi_rdata_s2.RRESP  = 2'b0;
 	    axi_rdata_s2.RLAST  = 4'b0;
 	    axi_rdata_s2.RVALID = 4'b0;	 
@@ -185,15 +181,12 @@ module interconnect ( clk_rst_if.sink    clk_rst_if,
       end // else: !if(!clk_rst_if.rstn)
    end // always @ (posedge clk_rst_if.clk)
    
-   //    
    // axi write address slave 1,2 
-   //
-   
    always @(posedge clk_rst_if.clk) begin
       if (!clk_rst_if.rstn) begin
 	 // slave 1
 	 AWID_S1     = 4'b0;	 
-	 AWADDR_S1   = 'd0;	 
+	 AWADDR_S1   = 32'b0;	 
 	 AWLEN_S1    = 4'b0;	 
 	 AWSIZE_S1   = 3'b0;	 
 	 AWCACHE_S1  = 4'b0;
@@ -201,7 +194,7 @@ module interconnect ( clk_rst_if.sink    clk_rst_if,
 	 AWVALID_S1  = 1'b0;	
 	 // slave 2
 	 AWID_S2     = 4'b0;	 
-	 AWADDR_S2   = 'd0;	 
+	 AWADDR_S2   = 32'b0;	 
 	 AWLEN_S2    = 4'b0;	 
 	 AWSIZE_S2   = 3'b0;	 
 	 AWCACHE_S2  = 4'b0;
@@ -210,6 +203,8 @@ module interconnect ( clk_rst_if.sink    clk_rst_if,
       end
       else begin
 	 // slave 1
+	 AWVALID_S1  = axi_waddr_s1.AWVALID;	    
+
 	 if (axi_waddr_s1.AWVALID) begin
 	    AWID_S1     = axi_waddr_s1.AWID;  
 	    AWADDR_S1   = axi_waddr_s1.AWADDR; 
@@ -217,18 +212,20 @@ module interconnect ( clk_rst_if.sink    clk_rst_if,
 	    AWSIZE_S1   = axi_waddr_s1.AWSIZE; 
 	    AWCACHE_S1  = axi_waddr_s1.AWCACHE;
 	    AWPROT_S1   = axi_waddr_s1.AWPROT;
-	    AWVALID_S1  = axi_waddr_s1.AWVALID;	    
 	 end
 	 else begin
 	    AWID_S1     = 4'b0;	 
-	    AWADDR_S1   = 'd0;	 
+	    AWADDR_S1   = 32'b0;	 
 	    AWLEN_S1    = 4'b0;	 
 	    AWSIZE_S1   = 3'b0;	 
 	    AWCACHE_S1  = 4'b0;
 	    AWPROT_S1   = 3'b0;
 	    AWVALID_S1  = 1'b1;	    
 	 end	 
+
 	 // slave 2
+	 AWVALID_S2  = axi_waddr_s1.AWVALID;	    	    
+
 	 if (axi_waddr_s2.AWVALID) begin
 	    AWID_S2     = axi_waddr_s2.AWID;  
 	    AWADDR_S2   = axi_waddr_s2.AWADDR; 
@@ -236,11 +233,10 @@ module interconnect ( clk_rst_if.sink    clk_rst_if,
 	    AWSIZE_S2   = axi_waddr_s2.AWSIZE; 
 	    AWCACHE_S2  = axi_waddr_s2.AWCACHE;
 	    AWPROT_S2   = axi_waddr_s2.AWPROT;
-	    AWVALID_S2  = axi_waddr_s1.AWVALID;	    	    
 	 end
 	 else begin
 	    AWID_S2     = 4'b0;	 
-	    AWADDR_S2   = 'd0;	 
+	    AWADDR_S2   = 32'b0;	 
 	    AWLEN_S2    = 4'b0;	 
 	    AWSIZE_S2   = 3'b0;	 
 	    AWCACHE_S2  = 4'b0;
@@ -250,10 +246,7 @@ module interconnect ( clk_rst_if.sink    clk_rst_if,
       end // else: !if(!clk_rst_if.rstn)      
    end // always @ (posedge clk_rst_if.clk)   
 				      
-   //
    // axi write data interface
-   //
-
    always @(posedge clk_rst_if.clk) begin
       if (!clk_rst_if.rstn) begin
 	 axi_wdata_s1.WREADY = 1'b0;
@@ -262,20 +255,10 @@ module interconnect ( clk_rst_if.sink    clk_rst_if,
       else begin
 	 axi_wdata_s1.WREADY = 1'b1;
 	 axi_wdata_s2.WREADY = 1'b1;
-	 // slave 1
-	 if (axi_wdata_s1.WVALID) begin
-	    mem[{axi_wdata_s1.WID,AWADDR_S1[9:0]}] = axi_wdata_s1.WDATA;
-	 end
-	 if (axi_wdata_s2.WVALID) begin
-	    mem[{axi_wdata_s2.WID,AWADDR_S2[9:0]}] = axi_wdata_s2.WDATA;
-	 end
       end // else: !if(!clk_rst_if.rstn)
    end // always @ (posedge clk_rst_if.clk)
 
-   //
    // axi write resp interface
-   //
-
    always @(posedge clk_rst_if.clk) begin
       if (!clk_rst_if.rstn) begin
 	 SEND_BRESP_s1 = 1'b0;
@@ -331,41 +314,44 @@ module interconnect ( clk_rst_if.sink    clk_rst_if,
       end // else: !if(!clk_rst_if.rstn)
    end // always @ (posedge clk_rst_if.   	
 
-   //
    // ocp interface
-   //
-
    always @(posedge clk_rst_if.clk) begin
       if (!clk_rst_if.rstn) begin
-	 ocp_if.MTagID      = 3'b0;
-	 ocp_if.MAddr       = 'd0;
+	 ocp_if.MTagID      = 4'b0;
+	 ocp_if.MAddr       = 32'b0;
 	 ocp_if.MCmd        = 3'b0;
-	 ocp_if.Mdata       = 'd0;
+	 ocp_if.Mdata       = 32'b0;
 	 ocp_if.MDataValid  = 1'b0;
 	 ocp_if.MRespAccept = 1'b0;	 
       end // if (!clk_rst_if.rstn)      
       else begin
 	 if (ARVALID_S1) begin
-	    ocp_if.MTagID      = 3'b0;
-	    ocp_if.MAddr       = ARADDR_S1;
-	    ocp_if.MCmd        = 2'b00;
+	    ocp_if.MTagID = ARID_S1;
+	    ocp_if.MAddr  = ARADDR_S1;
+	    ocp_if.MCmd   = 3'h0;
 	 end
 	 else if (ARVALID_S2) begin
-	    ocp_if.MTagID      = 3'b0;
-	    ocp_if.MAddr       = ARADDR_S2;
-	    ocp_if.MCmd        = 2'b00;
+	    ocp_if.MTagID = ARID_S2;
+	    ocp_if.MAddr  = ARADDR_S2;
+	    ocp_if.MCmd   = 3'h0;
 	 end
 	 else if (AWVALID_S1) begin
-	    ocp_if.MTagID      = 3'b0;
-	    ocp_if.MAddr       = AWADDR_S1;
-	    ocp_if.MCmd        = 2'b01;
+	    ocp_if.MTagID = AWID_S1;
+	    ocp_if.MAddr  = AWADDR_S1;
+	    ocp_if.MCmd   = 3'h1;
 	 end
 	 else if (AWVALID_S2) begin
-	    ocp_if.MTagID      = 3'b0;
-	    ocp_if.MAddr       = AWADDR_S2;
-	    ocp_if.MCmd        = 2'b01;
+	    ocp_if.MTagID = AWID_S2;
+	    ocp_if.MAddr  = AWADDR_S2;
+	    ocp_if.MCmd   = 3'h1;
 	 end
-	 else if (axi_wdata_s1.WVALID) begin
+	 else begin
+	    ocp_if.MTagID      = 4'b0;
+	    ocp_if.MAddr       = 32'b0;
+	    ocp_if.MCmd        = 3'b0;	    
+	 end	 
+
+	 if (axi_wdata_s1.WVALID) begin
 	    ocp_if.MDataValid  = 1'b1;
 	    ocp_if.Mdata       = axi_wdata_s1.WDATA;	    
 	 end
@@ -374,13 +360,15 @@ module interconnect ( clk_rst_if.sink    clk_rst_if,
 	    ocp_if.Mdata       = axi_wdata_s2.WDATA;	    
 	 end
 	 else begin
-	    ocp_if.MTagID      = 3'b0;
-	    ocp_if.MAddr       = 'd0;
-	    ocp_if.MCmd        = 3'b0;
-	    ocp_if.Mdata       = 'd0;
+	    ocp_if.Mdata       = 32'b0;
 	    ocp_if.MDataValid  = 1'b0;
-	    ocp_if.MRespAccept = 1'b0;	 
-	 end	 
+	 end
+
+	 if (ocp_if.SResp != OCP_NULL)
+	    ocp_if.MRespAccept = 1'b1;
+	 else
+	    ocp_if.MRespAccept = 1'b0;	   
+	 
       end // else: !if(!clk_rst_if.rstn)
    end // always @ (posedge clk_rst_if.clk)
       

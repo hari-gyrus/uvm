@@ -6,15 +6,10 @@
 // comes with this distribution for more information.
 // ********************************************************************************
 
-`ifndef INCLUDE_DEFINES__
-
- `define INCLUDE_DEFINES__
-
 parameter AW = 32;
 parameter DW = 32;
 
-typedef enum bit { AXI_READ  = 0; 
-		   AXI_WRITE = 1; } rw_T;
+typedef enum { READ  = 0, WRITE = 1 } rw_T;
 
 typedef enum bit [1:0] { RRESP_OKAY   = 2'b00,
 			 RRESP_EXOKAY = 2'b01,
@@ -43,6 +38,3 @@ typedef enum bit [1:0] { OCP_NULL  = 2'b00, // NO RESPONSE
 			 OCP_FAIL  = 2'b10, // REQUEST FAILED
 			 OCP_ERR   = 2'b11  // RESPONSE ERROR
 			 } SResp_T;
-
-
-`endif

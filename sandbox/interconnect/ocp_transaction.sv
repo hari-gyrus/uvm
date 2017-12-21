@@ -9,45 +9,45 @@
 class ocp_transaction extends uvm_sequence_item;
    `uvm_object_utils(ocp_transaction)
 
-   import tb_pkg::*;
-   
    rand MCmd_T cmd;   
    rand bit [2:0] id;
    rand bit [3:0] length;
    rand bit [AW-1:0] addr;
    rand bit [DW-1:0] data;   
    
-   function new (string name);
+   function new (string name = "ocp_transaction");
       super.new(name);      
    endfunction // new
 
    function void do_copy(uvm_object rhs);
       int i;      
       ocp_transaction rhs_t;
-      rhs_t = new();
+
+      $cast(rhs_t, rhs);      
       super.do_copy(rhs_t);
 
-      this.id     = rhs.id;
-      this.cmd    = rhs.cmd;
-      this.length = rhs.length;
-      this.addr   = rhs.addr;
+      id     = rhs_t.id;
+      cmd    = rhs_t.cmd;
+      length = rhs_t.length;
+      addr   = rhs_t.addr;
       
-      for (i=0; i<this.length; ++i)
-	this.data[i] = rhs.data[i];      	
+      for (i=0; i<length; ++i)
+	data[i] = rhs_t.data[i];      	
    endfunction // do_copy
 
    function string convert2string();
+      int i;      
       string rpt;
       rpt = super.convert2string();
 
-      $sformat(rpt, "id=%d cmd=%s addr=%h", this.id, this.cmd, this.addr);
-      for (i=0; i<this.length; ++i)
+      $sformat(rpt, "id=%d cmd=%s addr=%h", id, cmd, addr);
+      for (i=0; i<length; ++i)
 	$sformat(rpt, "data[%d]=%h", i, data[i]);
 
       return rpt;      
    endfunction // convert2string
 
-   function do_print(uvm_printer printer);
+   function void do_print(uvm_printer printer);
       printer.m_string = convert2string();      
    endfunction // do_print
    

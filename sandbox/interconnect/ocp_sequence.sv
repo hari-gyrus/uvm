@@ -9,23 +9,23 @@
 class ocp_sequence extends uvm_sequence #(ocp_transaction);
    `uvm_object_utils(ocp_sequence)
    
-   num_transactions = 5;  
+   int num_transactions = 5;  
 
-   function new (string name);
+   function new (string name = "ocp_sequence");
       super.new(name);      
    endfunction // new
 
-   task body;
+   task body();
       int i;
       ocp_transaction ocp_tx;
       
-      for (i=0; i<num_transactions; ++i)
-	begin
-	   ocp_tx = ocp_transaction::typeid::create(ocp_tx, this);
-	   ocp_tx.randomize();
-	   start_item(ocp_tx);
-	   finish_item(ocp_tx);	   
-	end      
+      for (i=0; i<num_transactions; ++i) begin
+	 ocp_tx = new();
+
+	 ocp_tx.randomize();
+	 start_item(ocp_tx);
+	 finish_item(ocp_tx);	   
+      end      
    endtask // body
 
 endclass // ocp_sequence

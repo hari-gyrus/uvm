@@ -9,33 +9,33 @@
 class axi_sequence extends uvm_sequence #(axi_transaction);
    `uvm_object_utils(axi_sequence)
    
-   master_id = 0;   
-   num_transactions = 5;
+   int master_id = 0;   
+   int num_transactions = 5;
    
-   function new (name);
+   function new (string name = "axi_sequence");
       super.new(name);      
    endfunction // new
 
-   task body;
+   task body();
       int i;
-      cyclic_random_id cid;      
-      axi_transaction axi_tx;
+      axi_transaction axi_txn;
+      cyclic_random_id crand_id;      
 
-      for (i=0; i<num_transactions; ++i)
-	begin
-	   axi_tx = axi_transactions::typeid::create(axi_tx, this);
-	   axi_tx.randomize() with rw = WRITE;
-	   cid.randomize();	   
-
-	   if (master_id == 1)
-	     axi_tx.id = cid.val_7_0;
-	   else
-	     axi_tx.id = cid.val_F_8;
-	   
-	   start_item(axi_tx);
-	   finish_item(axi_tx);	   
-	end
-      
+      for (i=0; i<num_transactions; ++i) begin
+	 crand_id = new();	   
+	 axi_txn  = new();
+	 
+	 crand_id.randomize();	   
+	 axi_txn.randomize() with { axi_txn.rw == WRITE; };
+	 
+	 if (master_id == 1)
+	   axi_txn.id = crand_id.val_0_7;
+	 else
+	   axi_txn.id = crand_id.val_8_F;
+	 
+ 	 start_item(axi_txn);
+	 finish_item(axi_txn);	   
+      end      
    endtask // body
    
 endclass // axi_sequence
