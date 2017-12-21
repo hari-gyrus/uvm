@@ -40,6 +40,7 @@ class alive_test extends uvm_test;
       axi_m2_sequence.num_transactions = 10;
       
       phase.raise_objection(this, "Starting test");
+      `uvm_info("ALIVE-TEST", "Starting test", UVM_MEDIUM) 
       fork
 	 axi_m1_sequence.start(env.axi_m1_agent.axi_seq);
 	 axi_m2_sequence.start(env.axi_m2_agent.axi_seq);	 

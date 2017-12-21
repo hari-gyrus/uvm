@@ -6,7 +6,7 @@
 // comes with this distribution for more information.
 // ********************************************************************************
 
-class ocp_slave_monitor extends uvm_monitor;   
+class ocp_slave_monitor extends uvm_monitor;
    `uvm_component_utils(ocp_slave_monitor)
 
    ocp_config ocp_cfg;
@@ -27,7 +27,7 @@ class ocp_slave_monitor extends uvm_monitor;
       ocp_vif = ocp_cfg.ocp_vif;
 
       rd_ana_port = new("rd_ana_port", this);
-      wr_ana_port = new("wr_ana_port", this);      
+      wr_ana_port = new("wr_ana_port", this);
    endfunction // build_phase
 
    virtual function void connect_phase(uvm_phase phase);
@@ -35,26 +35,41 @@ class ocp_slave_monitor extends uvm_monitor;
    endfunction // connect_phase   
 
    virtual task run_phase(uvm_phase phase);
+      int i;
+      bit [3:0] prev_MCmd;
       ocp_transaction ocp_txn;
       ocp_txn = new();
 
       wait(clk_rst_vif.rstn);
 
       forever @(posedge clk_rst_vif.clk) begin
-	 if (ocp_vif.MCmd == WRITE && ocp_vif.MDataValid) begin
+	 if (ocp_vif.MCmd == OCP_WRITE && ocp_vif.MDataValid) begin
 	    ocp_txn.id = ocp_vif.MTagID;
-	    ocp_txn.addr = ocp_vif.MAddr;
-	    ocp_txn.data = ocp_vif.Mdata;	    
-	    wr_ana_port.write(ocp_txn);	    
+	    ocp_txn.addr = ocp_vif.MAddr;	    	    	    
+	    ocp_txn.data[i] = ocp_vif.Mdata;	    	       
 	 end
-	 else if (ocp_vif.MCmd == READ) begin
+	 else if (ocp_vif.MCmd == OCP_READ) begin
 	    ocp_txn.id = ocp_vif.MTagID;
 	    ocp_txn.addr = ocp_vif.MAddr;
 	    @(ocp_vif.SResp == OCP_DVA);
-	    ocp_txn.data = ocp_vif.Sdata;
-	    rd_ana_port.write(ocp_txn);	    
+	    ocp_txn.data[i] = ocp_vif.Sdata;
 	 end	 
-      end            
+
+	 if (prev_MCmd == OCP_IDLE && ocp_vif.MCmd != OCP_IDLE) begin
+	    ++i;
+	 end
+	 else if (prev_MCmd == OCP_WRITE && ocp_vif.MCmd == OCP_IDLE) begin
+	    i = 0; wr_ana_port.write(ocp_txn);
+	 end	 
+	 else if (prev_MCmd == OCP_READ && ocp_vif.MCmd == OCP_IDLE) begin
+	    i = 0; rd_ana_port.write(ocp_txn);
+	 end	 
+    	 else begin
+	   i = 0;	 
+	 end
+	      
+	 prev_MCmd = ocp_vif.MCmd;
+      end      
    endtask // run_phase
 
 endclass // ocp_slave_monitor
