@@ -52,7 +52,7 @@ module testbench;
       clk_rst_if.clk = 0; 
       clk_rst_if.rstn = 1'b0;
       #100 clk_rst_if.rstn = 1'b1;                  
-      #10000 $finish;      
+      #1000 $finish;      
    end
    
    always #5 clk_rst_if.clk = ~clk_rst_if.clk;   

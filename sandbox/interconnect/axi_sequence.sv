@@ -44,6 +44,7 @@ class axi_sequence extends uvm_sequence #(axi_transaction);
 	 //                    axi_master_driver.manage_sequencer_txn pulls out next transaction
 
 	 `uvm_info("AXI-SEQUENCE", $psprintf("Master %d sending Transaction(%d): %s", master_id, i, axi_txn.convert2string), UVM_MEDIUM) 
+
 	 finish_item(axi_txn);	   
       end      
    endtask // body

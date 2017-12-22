@@ -245,6 +245,19 @@ module interconnect ( clk_rst_if.sink    clk_rst_if,
 	 end // else: !if(axi_waddr_s2.AWVALID)	 
       end // else: !if(!clk_rst_if.rstn)      
    end // always @ (posedge clk_rst_if.clk)   
+
+   // axi write addr interface
+   always @(posedge clk_rst_if.clk) begin
+      if (!clk_rst_if.rstn) begin
+	 axi_waddr_s1.AWREADY = 1'b0;
+	 axi_waddr_s2.AWREADY = 1'b0;
+      end // if (!clk_rst_if.rstn)      
+      else begin
+	 axi_waddr_s1.AWREADY = 1'b1;
+	 axi_waddr_s2.AWREADY = 1'b1;
+      end // else: !if(!clk_rst_if.rstn)
+   end // always @ (posedge clk_rst_if.clk)
+
 				      
    // axi write data interface
    always @(posedge clk_rst_if.clk) begin
