@@ -51,7 +51,7 @@ class axi_master_driver extends uvm_driver #(axi_transaction);
 
       forever begin
 	 seq_item_port.get_next_item(axi_txn);
-	 `uvm_info("AXI-DRIVER", $psprintf("Master retrieving transaction: %s", axi_txn.convert2string), UVM_MEDIUM)
+	 `uvm_info(get_name(), $psprintf(": get next item: %s", axi_txn.convert2string), UVM_MEDIUM)
 	 if (axi_txn.rw == READ)
 	   drv_rd_addr(axi_txn);
 	 else if (axi_txn.rw == WRITE) begin
@@ -70,6 +70,7 @@ class axi_master_driver extends uvm_driver #(axi_transaction);
       axi_raddr_vif.ARLEN   = axi_txn.length;
       @(posedge clk_rst_vif.clk);
       axi_raddr_vif.ARVALID = 1'b0;
+      `uvm_info(get_name(), $psprintf(": axi raddr: %s", axi_txn.convert2string), UVM_MEDIUM)
    endtask // drv_rd_addr
 
    task drv_wr_addr (axi_transaction axi_txn);
@@ -80,7 +81,7 @@ class axi_master_driver extends uvm_driver #(axi_transaction);
       axi_waddr_vif.AWLEN   = axi_txn.length;
       @(posedge clk_rst_vif.clk);
       axi_waddr_vif.AWVALID = 1'b0;
-      `uvm_info("AXI-DRIVER-WR-ADDR", $psprintf("Master driving transaction: %s", axi_txn.convert2string), UVM_MEDIUM)
+      `uvm_info(get_name(), $psprintf(": axi waddr: %s", axi_txn.convert2string), UVM_MEDIUM)
    endtask // drv_wr_addr
    
    task drv_wr_data (axi_transaction axi_txn);
@@ -92,7 +93,7 @@ class axi_master_driver extends uvm_driver #(axi_transaction);
 	 axi_wdata_vif.WDATA  = axi_txn.data[i];
       end
       axi_wdata_vif.WVALID = 1'b0;
-      `uvm_info("AXI-DRIVER-WR-DATA", $psprintf("Master driving transaction: %s", axi_txn.convert2string), UVM_MEDIUM)	 
+      `uvm_info(get_name(), $psprintf(": axi wdata: %s", axi_txn.convert2string), UVM_MEDIUM)	 
    endtask // drv_wr_addr
 
    task drive_read_resp_rdy;

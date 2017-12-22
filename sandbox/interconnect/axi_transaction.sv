@@ -46,7 +46,7 @@ class axi_transaction extends uvm_sequence_item;
 
       $sformat(rpt, "%s: id=%d rw=%s addr=0x%h length=%d", rpt, id, rw, addr, length);
       for (i=0; i<length; ++i)
-	$sformat(rpt, "%s: data[%d]=0x%h", rpt, i, data[i]);      
+	$sformat(rpt, "%s: data[%-1d]=0x%h", rpt, i, data[i]);      
 
       return rpt;      
    endfunction // convert2string

@@ -40,10 +40,9 @@ class axi_sequence extends uvm_sequence #(axi_transaction);
 	 //       1. Time 0:   axi_master_driver run_phase start
 	 //       2. Time 100: axi_master_driver.run_phase wait's for reset to be deasserted
 	 //                    axi_master_driver.run_phase kick's starts manage_sequencer_txn
-	 //       3. Time 105: axi_master_driver.manage_sequencer_txn wait's for posedge of clk
 	 //                    axi_master_driver.manage_sequencer_txn pulls out next transaction
 
-	 `uvm_info("AXI-SEQUENCE", $psprintf("Master %d sending Transaction(%d): %s", master_id, i, axi_txn.convert2string), UVM_MEDIUM) 
+	 `uvm_info(get_name(), $psprintf(":start txn(%-1d): %s", i, axi_txn.convert2string), UVM_MEDIUM) 
 
 	 finish_item(axi_txn);	   
       end      
